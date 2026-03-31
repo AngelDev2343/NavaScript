@@ -75,7 +75,7 @@ SHAREEE x"></textarea>
       </div>
       <div class="keyword-card">
         <div class="kw-word">si cond { } sino si { } sino { }</div>
-        <div class="kw-desc">Condicional con ramos</div>
+        <div class="kw-desc">Condicional con ramas</div>
       </div>
       <div class="keyword-card">
         <div class="kw-word">mientras cond { }</div>
@@ -112,41 +112,37 @@ SHAREEE x"></textarea>
 <script src="script.js"></script>
 
 <script>
-(function() {
-  const RULES = [
-    { re: /(Rawr[^\n]*)/, cls: 'hl-comment' },
+(function () {
+  var RULES = [
+    { re: /Rawr[^\n]*/, cls: 'hl-comment' },
     { re: /\b(NOOOO MORE|sino si|sino|si|mientras|para|hasta|Grr)\b/, cls: 'hl-control' },
     { re: /\b(lobo aparece|Gii Huu)\b/, cls: 'hl-decl' },
     { re: /\b(SHAREEE|Zap|Boom|Uuh|PREGUNTA)\b/, cls: 'hl-builtin' },
-    { re: /(\"[^\"]*\"|'[^']*')/, cls: 'hl-string' },
-    { re: /\b(\d+(?:\.\d+)?)\b/, cls: 'hl-number' },
+    { re: /"[^"]*"|'[^']*'/, cls: 'hl-string' },
+    { re: /\b\d+(?:\.\d+)?\b/, cls: 'hl-number' },
     { re: /\b(verdad|falso|true|false)\b/, cls: 'hl-bool' },
-    { re: /(\b[a-zA-Z_]\w*\s*(?=\())/, cls: 'hl-fn' },
+    { re: /\b[a-zA-Z_]\w*(?=\s*\()/, cls: 'hl-fn' },
     { re: /\b(con|decimales)\b/, cls: 'hl-control' },
   ];
 
-  function escapeHtml(s) {
-    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
   function tokenizeLine(line) {
-    if (line === '') return '';
-    let out = '';
-    let remaining = line;
-    while (remaining.length > 0) {
-      let best = null, bestIdx = Infinity, bestRule = null;
-      for (const rule of RULES) {
-        const m = remaining.match(rule.re);
+    var out = '', rest = line;
+    while (rest.length) {
+      var bestIdx = Infinity, bestMatch = null, bestCls = null;
+      for (var i = 0; i < RULES.length; i++) {
+        var m = rest.match(RULES[i].re);
         if (m && m.index < bestIdx) {
-          best = m;
-          bestIdx = m.index;
-          bestRule = rule;
+          bestIdx = m.index; bestMatch = m[0]; bestCls = RULES[i].cls;
         }
       }
-      if (!best) { out += escapeHtml(remaining); break; }
-      if (bestIdx > 0) out += escapeHtml(remaining.slice(0, bestIdx));
-      out += `<span class="${bestRule.cls}">${escapeHtml(best[0])}</span>`;
-      remaining = remaining.slice(bestIdx + best[0].length);
+      if (!bestMatch) { out += esc(rest); break; }
+      if (bestIdx > 0) out += esc(rest.slice(0, bestIdx));
+      out += '<span class="' + bestCls + '">' + esc(bestMatch) + '</span>';
+      rest = rest.slice(bestIdx + bestMatch.length);
     }
     return out;
   }
@@ -155,8 +151,8 @@ SHAREEE x"></textarea>
     return code.split('\n').map(tokenizeLine).join('\n');
   }
 
-  const ta = document.getElementById('code-editor');
-  const hl = document.getElementById('highlight-layer');
+  var ta = document.getElementById('code-editor');
+  var hl = document.getElementById('highlight-layer');
 
   function syncScroll() {
     hl.scrollTop = ta.scrollTop;
@@ -164,24 +160,19 @@ SHAREEE x"></textarea>
   }
 
   function update() {
-    hl.innerHTML = highlight(ta.value) + '\n';
+    hl.innerHTML = highlight(ta.value) + '\n ';
+    syncScroll();
   }
 
   ta.addEventListener('input', update);
   ta.addEventListener('scroll', syncScroll);
-  ta.addEventListener('keydown', syncScroll);
-  update();
 
-  const origLoadExample = window.loadExample;
-  window.loadExample = function() {
-    origLoadExample && origLoadExample();
-    setTimeout(update, 0);
-  };
-  const origLoadFile = window.loadFile;
-  window.loadFile = function(e) {
-    origLoadFile && origLoadFile(e);
-    setTimeout(update, 50);
-  };
+  var _loadExample = window.loadExample;
+  window.loadExample = function () { _loadExample && _loadExample(); setTimeout(update, 0); };
+  var _loadFile = window.loadFile;
+  window.loadFile = function (e) { _loadFile && _loadFile(e); setTimeout(update, 80); };
+
+  update();
 })();
 </script>
 
