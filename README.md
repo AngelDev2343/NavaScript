@@ -4,74 +4,88 @@
 
 [![Licencia: MIT](https://img.shields.io/badge/Licencia-MIT-white.svg)](https://opensource.org/licenses/MIT)
 [![VS Code Marketplace](https://img.shields.io/badge/VS%20Code-En%20Revisión-blue.svg)](https://marketplace.visualstudio.com)
-[![IDE Web](https://img.shields.io/badge/IDE-En%20Vivo-brightgreen)](https://AngelDev2343.github.io)
+[![IDE Web](https://img.shields.io/badge/IDE-En%20Vivo-brightgreen)](https://AngelDev2343.github.io/NavaScript)
 [![GitHub](https://img.shields.io/badge/GitHub-AngelDev2343-black)](https://github.com/AngelDev2343)
 
 ---
 
-## Tabla de Contenidos
+## 🚀 Introducción rápida
 
-- [Descripción general](#descripción-general)
-- [Capturas de pantalla](#capturas-de-pantalla)
-- [Componentes](#componentes)
-- [Referencia de sintaxis](#referencia-de-sintaxis)
-- [Ejemplos de código](#ejemplos-de-código)
-- [Cómo empezar](#cómo-empezar)
-- [Licencia](#licencia)
+**NavaScript** (`.ns`) es un lenguaje de programación interpretado, creado desde cero, con su propia sintaxis y herramientas oficiales:
 
----
+* **IDE web**: escribe y ejecuta código directamente en el navegador.
+* **Extensión para VS Code**: resaltado de sintaxis y ejecución integrada.
+* **Intérprete CLI**: ejecuta scripts `.ns` desde la terminal.
 
-## Descripción general
-
-**NavaScript** (`.ns`) es un lenguaje de programación interpretado construido desde cero. Cuenta con su propia sintaxis, un intérprete completamente funcional en el navegador, un IDE web dedicado, una extensión para VS Code con resaltado de sintaxis, y un intérprete CLI independiente.
-
-El lenguaje soporta variables, funciones, condicionales, bucles, recursión y evaluación de expresiones — todo a través de un conjunto de palabras clave único.
+Diseñado para ser simple y divertido, con soporte para variables, funciones, condicionales, bucles, recursión y más.
 
 ---
 
-## Capturas de pantalla
+## 🖼 Capturas de pantalla
 
-![alt text](capture.jpeg)
-![alt text](image.png)
-![alt text](code1.png)
-![alt text](image-1.png)
-![alt text](image-2.png)
-![alt text](image-3.png)
+<img src="capture.jpeg" alt="alt text" width="650" height="300">
+<img src="image.png" alt="alt text" width="650" height="600">
+<img src="code1.png" alt="alt text" width="650" height="350">
+<img src="image-1.png" alt="alt text" width="650" height="300">
+<img src="image-2.png" alt="alt text" width="650" height="300">
+<img src="image-3.png" alt="alt text" width="650" height="300">
+
 ---
 
-## Componentes
+## Componentes principales
 
-### 1. IDE Web
+### 1️⃣ IDE Web
 
-Un entorno de desarrollo completamente basado en el navegador, disponible en **[NavaScript IDE Oficial](https://AngelDev2343.github.io/NavaScript)**.
+Accede desde [NavaScript IDE Oficial](https://AngelDev2343.github.io/NavaScript) sin instalar nada.
 
 **Características:**
-- Editor de código con soporte para archivos `.ns`
-- Intérprete integrado — se ejecuta completamente en el navegador, sin servidor
-- Panel de salida en tiempo real con tiempo de ejecución
-- Carga y descarga de archivos `.ns` desde el disco
-- Panel de referencia rápida de sintaxis integrado
-- Atajo de teclado: `Ctrl+Enter` / `Cmd+Enter` para ejecutar
 
-No requiere instalación. Abre la URL y empieza a escribir código.
+* Editor de código con soporte `.ns`
+* Intérprete integrado en el navegador (sin servidor)
+* Panel de salida en tiempo real
+* Carga y descarga de archivos `.ns`
+* Referencia rápida de sintaxis integrada
+* Atajo: `Ctrl+Enter` / `Cmd+Enter` para ejecutar
 
 ---
 
-### 2. Extensión para VS Code
+### 2️⃣ Extensión para VS Code
 
-Una extensión de Visual Studio Code que agrega soporte completo para el lenguaje NavaScript.
+Agrega soporte completo para NavaScript dentro de Visual Studio Code.
 
 **Características:**
-- Resaltado de sintaxis para todas las palabras clave de NavaScript
-- Ejecutor integrado (comando `NS: Ejecutar RUNRUN`)
-- Panel de consola de salida dedicado
-- Soporte completo para archivos `.ns`
 
-**Estado:** Actualmente en revisión en el Marketplace de VS Code.
+* Resaltado de sintaxis para todas las palabras clave
+* Ejecutar scripts con `NS: Ejecutar RUNRUN`
+* Soporte para "Run & Debug" de Visual Studio Code
+* Consola de salida dedicada
+* Compatible con todos los archivos `.ns`
 
-**Instalación manual (mientras está en revisión):**
+**Estado:** en revisión en el Marketplace de VS Code.
 
-* Desde VS Code: `Extensiones` → `···` → `Instalar desde VSIX...` → selecciona el archivo `.vsix`.
+**Instalación manual:**
+
+1. Descarga el archivo `.vsix` desde [Releases](https://github.com/AngelDev2343/NavaScript/releases/tag/NS-Extension)
+2. Abre VS Code → `Extensiones` → `···` → `Instalar desde VSIX...`
+3. Selecciona el archivo y empieza a programar
+
+---
+
+## Cómo empezar
+
+### Opción A — IDE Web (sin instalación)
+
+Ve a **[NavaScript IDE Oficial](https://AngelDev2343.github.io/NavaScript)**, escribe tu código y presiona `RUNRUN` o `Ctrl+Enter`.
+
+---
+
+### Opción B — Extensión para VS Code
+
+1. Descarga el archivo `.vsix` desde la página de [Releases](https://github.com/AngelDev2343/NavaScript/releases/tag/NS-Extension).
+2. Abre VS Code.
+3. Ve a `Extensiones` → `···` → `Instalar desde VSIX...`.
+4. Selecciona el archivo descargado.
+5. Crea un archivo con extensión `.ns` y empieza a programar.
 
 ---
 
@@ -310,23 +324,6 @@ SHAREEE fib(10)
 
 ---
 
-## Cómo empezar
-
-### Opción A — IDE Web (sin instalación)
-
-Ve a **[NavaScript IDE Oficial](https://AngelDev2343.github.io/NavaScript)**, escribe tu código y presiona `RUNRUN` o `Ctrl+Enter`.
-
----
-
-### Opción B — Extensión para VS Code
-
-1. Descarga el archivo `.vsix` desde la página de [Releases](https://github.com/AngelDev2343/navascript/releases).
-2. Abre VS Code.
-3. Ve a `Extensiones` → `···` → `Instalar desde VSIX...`.
-4. Selecciona el archivo descargado.
-5. Crea un archivo con extensión `.ns` y empieza a programar.
-
----
 
 ## Licencia
 
