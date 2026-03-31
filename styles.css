@@ -177,12 +177,14 @@ body {
   background: var(--bg);
 }
 
+/* Wrapper del editor: contiene el layer de color y el textarea */
 .editor-wrapper {
   flex: 1;
   position: relative;
   overflow: hidden;
 }
 
+/* El layer de highlight y el textarea comparten fuente/tamaño/padding exactos */
 #highlight-layer,
 #code-editor {
   font-family: var(--font-mono);
@@ -191,41 +193,39 @@ body {
   padding: 16px;
   tab-size: 2;
   white-space: pre;
-  word-wrap: normal;
   overflow: auto;
+  word-wrap: normal;
   position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
+  inset: 0;
   margin: 0;
   border: none;
-  outline: none;
 }
 
+/* El div de colores: detrás, no interactivo */
 #highlight-layer {
-  color: transparent;
   background: transparent;
+  color: var(--text);
   pointer-events: none;
   z-index: 1;
   overflow: hidden;
 }
 
+/* El textarea: encima, transparente para dejar ver los colores */
 #code-editor {
-  color: var(--text);
   background: transparent;
+  color: transparent;
   caret-color: var(--text);
+  outline: none;
   resize: none;
   z-index: 2;
-  color: rgba(224,224,224,0.01);
-  caret-color: var(--text);
 }
 
 #code-editor::selection {
-  background: rgba(255,255,255,0.15);
-  color: rgba(224,224,224,0.01);
+  background: rgba(255, 255, 255, 0.15);
 }
 
-/* Syntax highlight colors — based on tmLanguage scopes */
-.hl-comment  { color: #666666; font-style: italic; }
+/* Colores de sintaxis — basados en los scopes del tmLanguage */
+.hl-comment { color: #636363; font-style: italic; }
 .hl-control  { color: #c792ea; }
 .hl-decl     { color: #82aaff; }
 .hl-builtin  { color: #ffcb6b; }
