@@ -350,13 +350,18 @@ class NavascriptInterpreter:
 
         return {"skip": cur_end + 1}
 
-    # ── evaluación de condición ───────────────
+# ── evaluación de condición ───────────────
     def eval_condition(self, cond, scope):
         processed = self.process_complex_expr(cond, scope)
         # Reemplazar operadores NavaScript → Python
         processed = processed.replace("&&", " and ").replace("||", " or ")
+        
+        class _JSStr(str):
+            def __add__(self, other): return _JSStr(str(self) + str(other))
+            def __radd__(self, other): return _JSStr(str(other) + str(self))
+            
         try:
-            return bool(eval(processed, {"__builtins__": {}}, {}))
+            return bool(eval(processed, {"__builtins__": {}, "_JSStr": _JSStr}, {}))
         except Exception:
             raise NavascriptError(f'Condición inválida: "{cond}"')
 
@@ -403,8 +408,13 @@ class NavascriptInterpreter:
 
         # Expresión compleja
         processed = self.process_complex_expr(expr, scope)
+        
+        class _JSStr(str):
+            def __add__(self, other): return _JSStr(str(self) + str(other))
+            def __radd__(self, other): return _JSStr(str(other) + str(self))
+
         try:
-            return eval(processed, {"__builtins__": {}}, {})
+            return eval(processed, {"__builtins__": {}, "_JSStr": _JSStr}, {})
         except Exception:
             raise NavascriptError(f'Expresión inválida: "{expr}"')
 
@@ -419,7 +429,7 @@ class NavascriptInterpreter:
                 while i < len(expr) and expr[i] != q:
                     s += expr[i]; i += 1
                 s += q; i += 1
-                result += s; continue
+                result += f'_JSStr({s})'; continue
             # identificadores
             if re.match(r'[a-zA-Z_]', c):
                 ident = ''
@@ -447,14 +457,13 @@ class NavascriptInterpreter:
                 val = self.get_var(ident, scope)
                 result += (self._py_repr(val) if val is not None else ident) + ws
                 continue
-            # operadores: == ya es == en Python, pero != también
+            # operadores
             result += c; i += 1
-        # convertir concatenación JS (+) entre strings a Python
         return result
 
     def _py_repr(self, val):
         if isinstance(val, bool): return 'True' if val else 'False'
-        if isinstance(val, str):  return repr(val)
+        if isinstance(val, str):  return f'_JSStr({repr(str(val))})'
         return str(val)
 
     # ── llamar función ────────────────────────
@@ -831,12 +840,24 @@ class NavaScriptIDE(tk.Tk):
             self.status_var.set(f"Listo ({elapsed}ms)")
 
     def _ask_input(self, prompt):
-        result = simpledialog.askstring(
-            "PREGUNTA",
-            prompt or "Ingresa un valor:",
-            parent=self,
-        )
-        return result or ""
+            result = [None]
+            event = threading.Event()
+
+            def _ask():
+                result[0] = simpledialog.askstring(
+                    "PREGUNTA",
+                    prompt or "Ingresa un valor:",
+                    parent=self,
+                )
+                event.set()
+
+            # Enviar la solicitud de UI al hilo principal
+            self.after(0, _ask)
+            
+            # Pausar el hilo del intérprete hasta que el usuario responda
+            event.wait()
+            
+            return result[0] or ""
 
     # ── archivos ──────────────────────────────
     def load_example(self):
