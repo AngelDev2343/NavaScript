@@ -79,12 +79,13 @@ Ve a **[NavaScript IDE Oficial](https://AngelDev2343.github.io/NavaScript)**, es
 
 ## 📸 Capturas de pantalla
 
-<img src="capture.jpeg" alt="alt text" width="1000" height="500">
-<img src="image.png" alt="alt text" width="1000" height="1100">
-<img src="code1.png" alt="alt text" width="1000" height="700">
-<img src="image-1.png" alt="alt text" width="1000" height="600">
-<img src="image-2.png" alt="alt text" width="1000" height="600">
-<img src="image-3.png" alt="alt text" width="1000" height="600">
+<img src="images/capture.jpeg" alt="alt text" width="1000" height="500">
+<img src="images/image.png" alt="alt text" width="1000" height="1100">
+<img src="images/code1.png" alt="alt text" width="1000" height="700">
+<img src="images/image-1.png" alt="alt text" width="1000" height="600">
+<img src="images/image-2.png" alt="alt text" width="1000" height="600">
+<img src="images/image-3.png" alt="alt text" width="1000" height="600">
+<img src="images/image-4.png" alt="alt text" width="1000" height="600">
 
 ---
 

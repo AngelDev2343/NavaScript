@@ -1,2 +1,0 @@
-lobo aparece peso = PREGUNTA "¿Cual es tu peso?"
-SHAREEE "Tu peso es " + peso
