@@ -1,14 +1,20 @@
-SHAREEE "=========================================="
-SHAREEE   "NAVASCRIPT - Ejemplo"
-SHAREEE "=========================================="
-
-Rawr --- Variables ---
-lobo aparece x = 10
-lobo aparece y = 5
-SHAREEE "Valores iniciales: x=" + x + " y=" + y
-
-Rawr --- Función básica ---
-Gii Huu sumar(a, b) {
-  NOOOO MORE a + b
+Rawr "¡Bienvenido a la calculadora de IMC!"
+lobo aparece peso = PREGUNTA "¿Cual es tu peso?"
+lobo aparece altura = PREGUNTA "¿Cual es tu altura? (Ej. 1.71)"
+lobo aparece imc = peso / (altura * altura)
+lobo aparece clasificacion = "Obesidad"
+si imc < 18.5 {
+    clasificacion = "Peso bajo"
 }
-SHAREEE "Suma de x+y = " + sumar(x, y)
+si imc < 25 {
+    si imc >= 18.5 {
+        clasificacion = "Normal"
+    }
+}
+si imc < 30 {
+    si imc >= 25 {
+        clasificacion = "Obesidad"
+    }
+}
+SHAREEE "Tu IMC es: " + imc
+SHAREEE "Clasificacion: " + clasificacion

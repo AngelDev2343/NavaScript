@@ -1,5 +1,5 @@
 const EXAMPLE_CODE = `SHAREEE "=========================================="
-SHAREEE   "NAVASCRIPT - Ejemplo"
+SHAREEE "NAVASCRIPT - Ejemplo Completo"
 SHAREEE "=========================================="
 
 Rawr --- Variables ---
@@ -12,12 +12,32 @@ Gii Huu sumar(a, b) {
   NOOOO MORE a + b
 }
 SHAREEE "Suma de x+y = " + sumar(x, y)
+
+Rawr --- Condicional con sino si / sino ---
+si x > y {
+  SHAREEE "x es mayor que y"
+} sino si x == y {
+  SHAREEE "son iguales"
+} sino {
+  SHAREEE "y es mayor que x"
+}
+
+Rawr --- Bucle para ---
+lobo aparece suma = 0
+para i = 1 hasta 5 {
+  suma = suma + i
+}
+SHAREEE "Suma del 1 al 5: " + suma
+
+Rawr --- SHAREEE con decimales ---
+lobo aparece pi = 3.14159265358979
+SHAREEE pi con 2 decimales
 `;
 
-// ---- Intérprete runrun ----
 class NavascriptInterpreter {
-  constructor(output) {
+  constructor(output, inputFn) {
     this.output = output;
+    this.inputFn = inputFn;
     this.vars = {};
     this.funcs = {};
     this.callDepth = 0;
@@ -26,20 +46,16 @@ class NavascriptInterpreter {
     this.iterCount = 0;
   }
 
-  log(msg, type = 'text') {
-    this.output(String(msg), type);
-  }
+  log(msg, type = 'text') { this.output(String(msg), type); }
 
   tokenizeLines(code) {
-    const raw = code.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-    return raw.split('\n');
+    return code.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
   }
 
-  runrun(code) {
-    const lines = this.tokenizeLines(code);
-    const cleaned = lines.map(l => l.trim()).filter(l => l.length > 0);
-    this.preScanFunctions(cleaned);
-    this.executeLines(cleaned, 0);
+  async runrun(code) {
+    const lines = this.tokenizeLines(code).map(l => l.trim()).filter(l => l.length > 0);
+    this.preScanFunctions(lines);
+    await this.executeLines(lines, 0, this.vars);
   }
 
   preScanFunctions(lines) {
@@ -57,74 +73,133 @@ class NavascriptInterpreter {
           this.funcs[fname] = { params, body };
         }
         i = end + 1;
-      } else {
-        i++;
-      }
+      } else { i++; }
     }
   }
 
+  // Cuenta { y } fuera de strings, char por char, y retorna ambos por separado.
+  _countBraces(line) {
+    let opens = 0, closes = 0, inStr = false, strChar = '';
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (inStr) { if (c === strChar) inStr = false; }
+      else {
+        if (c === '"' || c === "'") { inStr = true; strChar = c; }
+        else if (c === '{') opens++;
+        else if (c === '}') closes++;
+      }
+    }
+    return { opens, closes };
+  }
+
+  // Versión que procesa carácter a carácter y retorna el depth
+  // al primer momento que baja a 0, para detectar cierre prematuro.
+  // Retorna: { closesFirst: bool } — si el primer } baja depth a 0 antes que cualquier {
+  _closesBeforeOpens(line, depth) {
+    let d = depth;
+    let inStr = false, strChar = '';
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (inStr) { if (c === strChar) inStr = false; continue; }
+      if (c === '"' || c === "'") { inStr = true; strChar = c; continue; }
+      if (c === '}') {
+        d--;
+        if (d <= 0) return true; // cierra antes de cualquier {
+      } else if (c === '{') {
+        d++;
+      }
+    }
+    return false;
+  }
+
+  // extractBlock: retorna body y end.
+  // end = índice de la línea que cierra el bloque (NO incluida en body).
+  // Clave: si una línea cierra depth a 0 con un } ANTES de abrir con {,
+  // esa línea es el cierre aunque también tenga un { después (caso "} sino si ... {").
   extractBlock(lines, startIdx) {
     let i = startIdx;
     let depth = 0;
-    let body = [];
+    const body = [];
     let foundOpen = false;
+
     while (i < lines.length) {
       const l = lines[i];
-      if (!foundOpen && l.includes('{')) {
-        foundOpen = true;
-        depth = 1;
-        const after = l.slice(l.indexOf('{') + 1).trim();
-        if (after && after !== '}') {
-          const subLines = after.split(';').map(s => s.trim()).filter(s => s);
-          subLines.forEach(sl => body.push(sl));
-          if (after.includes('}')) { depth--; }
-        }
-        i++;
-        continue;
-      }
-      if (foundOpen) {
-        const opens = (l.match(/\{/g) || []).length;
-        const closes = (l.match(/\}/g) || []).length;
-        if (l === '}' || (depth + opens - closes <= 0)) {
-          if (l !== '}') {
-            const inside = l.replace(/\}$/, '').trim();
-            if (inside) body.push(inside);
+
+      if (!foundOpen) {
+        if (l.includes('{')) {
+          foundOpen = true;
+          const openIdx = l.indexOf('{');
+          depth = 1;
+          const after = l.slice(openIdx + 1).trim();
+          if (after) {
+            // ¿El after cierra el bloque en la misma línea?
+            if (this._closesBeforeOpens(after, depth)) {
+              return { body, end: i };
+            }
+            const { opens, closes } = this._countBraces(after);
+            depth += opens - closes;
+            if (depth <= 0) return { body, end: i };
+            after.split(';').map(s => s.trim()).filter(s => s).forEach(sl => body.push(sl));
           }
-          depth += opens - closes;
-          if (depth <= 0) { return { body, end: i }; }
-        } else {
-          depth += opens - closes;
-          body.push(l);
+          i++; continue;
         }
+        i++; continue;
       }
+
+      // Dentro del bloque: ¿esta línea cierra depth a 0 con un } ANTES de cualquier {?
+      if (this._closesBeforeOpens(l, depth)) {
+        // Esta línea cierra el bloque. No va al body.
+        return { body, end: i };
+      }
+
+      const { opens, closes } = this._countBraces(l);
+      const newDepth = depth + opens - closes;
+      if (newDepth <= 0) {
+        return { body, end: i };
+      }
+      depth = newDepth;
+      body.push(l);
       i++;
     }
     return { body, end: i - 1 };
   }
 
-  executeLines(lines, startIdx, localVars) {
-    const scope = localVars || this.vars;
+  async executeLines(lines, startIdx, scope) {
     let i = startIdx;
     while (i < lines.length) {
       const line = lines[i];
       if (!line || line.startsWith('Rawr')) { i++; continue; }
-
       if (line.startsWith('Gii Huu ')) {
         const { end } = this.extractBlock(lines, i);
-        i = end + 1;
-        continue;
+        i = end + 1; continue;
       }
-
-      const result = this.executeLine(line, lines, i, scope);
+      const result = await this.executeLine(line, lines, i, scope);
       if (result && result.type === 'return') return result;
-      if (result && result.skip) { i = result.skip; continue; }
+      if (result && result.skip !== undefined) { i = result.skip; continue; }
       i++;
     }
   }
 
-  executeLine(line, lines, idx, scope) {
+  setVar(name, value, scope) {
+    if (scope !== this.vars && Object.prototype.hasOwnProperty.call(scope, name)) {
+      scope[name] = value;
+    } else if (Object.prototype.hasOwnProperty.call(this.vars, name)) {
+      this.vars[name] = value;
+    } else {
+      scope[name] = value;
+    }
+  }
+
+  getVar(name, scope) {
+    if (scope[name] !== undefined) return scope[name];
+    if (this.vars[name] !== undefined) return this.vars[name];
+    return undefined;
+  }
+
+  async executeLine(line, lines, idx, scope) {
     this.iterCount++;
-    if (this.iterCount > this.MAX_ITER) throw new Error('Límite de iteraciones alcanzado.');
+    if (this.iterCount > this.MAX_ITER)
+      throw new Error('Límite de iteraciones alcanzado. ¿Hay un bucle infinito?');
 
     if (line.startsWith('Rawr')) return null;
 
@@ -133,95 +208,87 @@ class NavascriptInterpreter {
       const eqIdx = rest.indexOf('=');
       if (eqIdx === -1) throw new Error(`Sintaxis inválida: ${line}`);
       const varName = rest.slice(0, eqIdx).trim();
-      const valExpr = rest.slice(eqIdx + 1).trim();
-      scope[varName] = this.evalExpr(valExpr, scope);
+      scope[varName] = await this.evalExprAsync(rest.slice(eqIdx + 1).trim(), scope);
       return null;
     }
 
     if (line.startsWith('SHAREEE ')) {
-      const expr = line.slice(8).trim();
-      const val = this.evalExpr(expr, scope);
-      this.log(val);
+      const rest = line.slice(8).trim();
+      const decMatch = rest.match(/^(.+?)\s+con\s+(\d+)\s+decimales$/);
+      if (decMatch) {
+        const num = parseFloat(await this.evalExprAsync(decMatch[1].trim(), scope));
+        if (isNaN(num)) throw new Error(`'con decimales' requiere un número`);
+        this.log(num.toFixed(parseInt(decMatch[2])));
+      } else {
+        this.log(await this.evalExprAsync(rest, scope));
+      }
       return null;
     }
 
     if (line.startsWith('NOOOO MORE ')) {
-      const expr = line.slice(11).trim();
-      const val = this.evalExpr(expr, scope);
-      return { type: 'return', value: val };
+      return { type: 'return', value: await this.evalExprAsync(line.slice(11).trim(), scope) };
     }
 
     if (line.startsWith('Zap ')) {
       const vname = line.slice(4).trim();
-      if (scope[vname] === undefined && this.vars[vname] === undefined) throw new Error(`Variable no existe: ${vname}`);
-      if (scope[vname] !== undefined) scope[vname]++;
-      else this.vars[vname]++;
-      return null;
+      const cur = this.getVar(vname, scope);
+      if (cur === undefined) throw new Error(`Variable no existe: "${vname}"`);
+      if (typeof cur !== 'number') throw new Error(`Zap solo funciona con números. "${vname}" es ${typeof cur} (valor: "${cur}")`);
+      this.setVar(vname, cur + 1, scope); return null;
     }
 
     if (line.startsWith('Boom ')) {
       const vname = line.slice(5).trim();
-      if (scope[vname] === undefined && this.vars[vname] === undefined) throw new Error(`Variable no existe: ${vname}`);
-      if (scope[vname] !== undefined) scope[vname]--;
-      else this.vars[vname]--;
-      return null;
-    }
-
-    if (line.startsWith('Uuh ')) {
-      const ms = parseInt(this.evalExpr(line.slice(4).trim(), scope));
-      const end = Date.now() + ms;
-      while (Date.now() < end) {} 
-      this.log(`Pausa: ${ms}ms`, 'info');
-      return null;
+      const cur = this.getVar(vname, scope);
+      if (cur === undefined) throw new Error(`Variable no existe: "${vname}"`);
+      if (typeof cur !== 'number') throw new Error(`Boom solo funciona con números. "${vname}" es ${typeof cur} (valor: "${cur}")`);
+      this.setVar(vname, cur - 1, scope); return null;
     }
 
     if (line.startsWith('si ') || line === 'si{') {
-      const condMatch = line.match(/^si\s+(.+?)\s*\{?$/);
-      if (!condMatch) throw new Error(`Sintaxis si: ${line}`);
-      const cond = condMatch[1].replace(/\{$/, '').trim();
-      const { body: ifBody, end: ifEnd } = this.extractBlock(lines, idx);
-      let elseBody = null;
-      let afterEnd = ifEnd + 1;
-      
-      if (afterEnd < lines.length && (lines[afterEnd] === 'sino {' || lines[afterEnd] === 'sino{' || lines[afterEnd].startsWith('} sino') || lines[afterEnd] === 'sino')) {
-        const { body: eb, end: elEnd } = this.extractBlock(lines, afterEnd);
-        elseBody = eb;
-        afterEnd = elEnd + 1;
-      }
-      const condVal = this.evalCondition(cond, scope);
-      if (condVal) {
-        const r = this.executeLines(ifBody, 0, scope);
-        if (r && r.type === 'return') return r;
-      } else if (elseBody) {
-        const r = this.executeLines(elseBody, 0, scope);
+      return await this.executeIf(line, lines, idx, scope);
+    }
+
+    if (line.startsWith('para ')) {
+      const match = line.match(/^para\s+(\w+)\s*=\s*(.+?)\s+hasta\s+(.+?)\s*\{?$/);
+      if (!match) throw new Error(`Sintaxis para: ${line}\nEjemplo: para i = 0 hasta 10 { }`);
+      const varName = match[1];
+      const startVal = Number(await this.evalExprAsync(match[2].trim(), scope));
+      const endVal   = Number(await this.evalExprAsync(match[3].replace(/\{$/, '').trim(), scope));
+      const { body, end } = this.extractBlock(lines, idx);
+      let lc = 0;
+      for (let v = startVal; v <= endVal; v++) {
+        if (++lc > 10000) throw new Error(`Bucle 'para' demasiado largo`);
+        scope[varName] = v;
+        const r = await this.executeLines(body, 0, scope);
         if (r && r.type === 'return') return r;
       }
-      return { skip: afterEnd };
+      return { skip: end + 1 };
     }
 
     if (line.startsWith('mientras ')) {
-      const condMatch = line.match(/^mientras\s+(.+?)\s*\{?$/);
-      if (!condMatch) throw new Error(`Sintaxis mientras: ${line}`);
-      const cond = condMatch[1].replace(/\{$/, '').trim();
+      const m = line.match(/^mientras\s+(.+?)\s*\{?$/);
+      if (!m) throw new Error(`Sintaxis mientras: ${line}`);
+      const cond = m[1].replace(/\{$/, '').trim();
       const { body, end } = this.extractBlock(lines, idx);
-      let loopCount = 0;
-      while (this.evalCondition(cond, scope)) {
-        if (++loopCount > 10000) throw new Error('Bucle mientras infinito');
-        const r = this.executeLines(body, 0, scope);
+      let lc = 0;
+      while (await this.evalCondition(cond, scope)) {
+        if (++lc > 10000) throw new Error('Bucle mientras demasiado largo. ¿Es infinito?');
+        const r = await this.executeLines(body, 0, scope);
         if (r && r.type === 'return') return r;
       }
       return { skip: end + 1 };
     }
 
     if (line.startsWith('Grr ')) {
-      const condMatch = line.match(/^Grr\s+(.+?)\s*\{?$/);
-      if (!condMatch) throw new Error(`Sintaxis Grr: ${line}`);
-      const cond = condMatch[1].replace(/\{$/, '').trim();
+      const m = line.match(/^Grr\s+(.+?)\s*\{?$/);
+      if (!m) throw new Error(`Sintaxis Grr: ${line}`);
+      const cond = m[1].replace(/\{$/, '').trim();
       const { body, end } = this.extractBlock(lines, idx);
-      let loopCount = 0;
-      while (!this.evalCondition(cond, scope)) {
-        if (++loopCount > 10000) throw new Error('Bucle Grr infinito');
-        const r = this.executeLines(body, 0, scope);
+      let lc = 0;
+      while (!(await this.evalCondition(cond, scope))) {
+        if (++lc > 10000) throw new Error('Bucle Grr demasiado largo. ¿Es infinito?');
+        const r = await this.executeLines(body, 0, scope);
         if (r && r.type === 'return') return r;
       }
       return { skip: end + 1 };
@@ -229,76 +296,120 @@ class NavascriptInterpreter {
 
     const assignMatch = line.match(/^([a-zA-Z_]\w*)\s*=\s*(.+)$/);
     if (assignMatch) {
-      const vname = assignMatch[1];
       const expr = assignMatch[2].trim();
-      const val = this.evalExpr(expr, scope);
-      if (scope !== this.vars && scope[vname] !== undefined) scope[vname] = val;
-      else this.vars[vname] = val;
+      if (expr.startsWith('=')) throw new Error(`¿Quisiste comparar? Usa == para comparar, = para asignar.`);
+      this.setVar(assignMatch[1], await this.evalExprAsync(expr, scope), scope);
       return null;
     }
 
     const callMatch = line.match(/^([a-zA-Z_]\w*)\s*\((.*)?\)$/);
     if (callMatch) {
-      this.callFunction(callMatch[1], callMatch[2] || '', scope);
+      await this.callFunction(callMatch[1], callMatch[2] || '', scope);
       return null;
     }
 
-    throw new Error(`Instrucción desconocida: ${line}`);
+    throw new Error(`Instrucción desconocida: "${line}"`);
   }
 
-  evalCondition(cond, scope) {
-    const expr = this.replaceVars(cond, scope);
+  // executeIf con la nueva lógica de extractBlock:
+  // lines[end] = línea de cierre del bloque (p.ej. "} sino si x == y {")
+  async executeIf(line, lines, idx, scope) {
+    const condMatch = line.match(/^si\s+(.+?)\s*\{?$/);
+    if (!condMatch) throw new Error(`Sintaxis si: ${line}`);
+    const cond = condMatch[1].replace(/\{$/, '').trim();
+
+    const { body: ifBody, end: ifEnd } = this.extractBlock(lines, idx);
+    const branches = [{ cond, body: ifBody }];
+    let curEnd = ifEnd;
+
+    while (true) {
+      const cl = (lines[curEnd] || '').trim();
+
+      // "} sino si condicion {" o "} sino si condicion"
+      const elseIfMatch = cl.match(/^\}\s*sino\s+si\s+(.+?)(\s*\{)?\s*$/);
+      if (elseIfMatch) {
+        const elseIfCond = elseIfMatch[1].trim().replace(/\{$/, '').trim();
+        const { body: eib, end: eiEnd } = this.extractBlock(lines, curEnd);
+        branches.push({ cond: elseIfCond, body: eib });
+        curEnd = eiEnd;
+        continue;
+      }
+
+      // "} sino {" o "} sino"
+      const elseMatch = cl.match(/^\}\s*sino\s*(\{)?\s*$/);
+      if (elseMatch) {
+        const { body: eb, end: elEnd } = this.extractBlock(lines, curEnd);
+        branches.push({ cond: null, body: eb });
+        curEnd = elEnd;
+        break;
+      }
+
+      break;
+    }
+
+    for (const branch of branches) {
+      if (branch.cond === null || await this.evalCondition(branch.cond, scope)) {
+        const r = await this.executeLines(branch.body, 0, scope);
+        if (r && r.type === 'return') return r;
+        break;
+      }
+    }
+
+    return { skip: curEnd + 1 };
+  }
+
+  async evalCondition(cond, scope) {
+    const processed = this.processComplexExpr(cond, scope);
     try {
-      return !!Function('"use strict"; return (' + expr + ')')();
+      return !!Function('"use strict"; return (' + processed + ')')();
     } catch(e) {
-      throw new Error(`Condición inválida: ${cond}`);
+      throw new Error(`Condición inválida: "${cond}"`);
     }
   }
 
-  evalExpr(expr, scope) {
+  async evalExprAsync(expr, scope) {
     if (!expr && expr !== 0) return '';
     expr = expr.trim();
-
-    if ((expr.startsWith('"') && expr.endsWith('"')) || (expr.startsWith("'") && expr.endsWith("'"))) {
-      return expr.slice(1, -1);
-    }
-
+    if ((expr.startsWith('"') && expr.endsWith('"')) ||
+        (expr.startsWith("'") && expr.endsWith("'"))) return expr.slice(1, -1);
     if (!isNaN(expr) && expr !== '') return Number(expr);
     if (expr === 'verdad' || expr === 'true') return true;
     if (expr === 'falso' || expr === 'false') return false;
 
-    const funcCallMatch = expr.match(/^([a-zA-Z_]\w*)\s*\(([^)]*)\)$/);
-    if (funcCallMatch && this.funcs[funcCallMatch[1]]) {
-      return this.callFunction(funcCallMatch[1], funcCallMatch[2], scope);
+    if (expr.startsWith('PREGUNTA')) {
+      const rawPrompt = expr.slice(8).trim();
+      const prompt = rawPrompt ? await this.evalExprAsync(rawPrompt, scope) : '';
+      const answer = await this.inputFn(String(prompt));
+      if (!isNaN(answer) && String(answer).trim() !== '') return Number(answer);
+      return answer;
     }
 
+    const funcCallMatch = expr.match(/^([a-zA-Z_]\w*)\s*\(([^)]*)\)$/);
+    if (funcCallMatch && this.funcs[funcCallMatch[1]])
+      return await this.callFunction(funcCallMatch[1], funcCallMatch[2], scope);
+
     if (/^[a-zA-Z_]\w*$/.test(expr)) {
-      if (scope[expr] !== undefined) return scope[expr];
-      if (this.vars[expr] !== undefined) return this.vars[expr];
-      throw new Error(`Variable no definida: ${expr}`);
+      const val = this.getVar(expr, scope);
+      if (val !== undefined) return val;
+      throw new Error(`Variable no definida: "${expr}"`);
     }
 
     const processed = this.processComplexExpr(expr, scope);
     try {
       return Function('"use strict"; return (' + processed + ')')();
     } catch(e) {
-      throw new Error(`Expresión inválida: ${expr}`);
+      throw new Error(`Expresión inválida: "${expr}"`);
     }
   }
 
   processComplexExpr(expr, scope) {
-    let result = '';
-    let i = 0;
+    let result = '', i = 0;
     while (i < expr.length) {
       if (expr[i] === '"' || expr[i] === "'") {
-        const q = expr[i];
-        let s = q;
-        i++;
+        const q = expr[i]; let s = q; i++;
         while (i < expr.length && expr[i] !== q) { s += expr[i]; i++; }
-        s += q;
-        i++;
-        result += s;
-        continue;
+        s += q; i++;
+        result += s; continue;
       }
       if (/[a-zA-Z_]/.test(expr[i])) {
         let ident = '';
@@ -306,76 +417,102 @@ class NavascriptInterpreter {
         let ws = '';
         while (i < expr.length && expr[i] === ' ') { ws += expr[i]; i++; }
         if (i < expr.length && expr[i] === '(') {
-          let depth2 = 0;
-          let args = '';
+          let d2 = 0, args = '';
           while (i < expr.length) {
-            if (expr[i] === '(') depth2++;
-            else if (expr[i] === ')') { depth2--; if (depth2 === 0) { args += ')'; i++; break; } }
+            if (expr[i] === '(') d2++;
+            else if (expr[i] === ')') { d2--; if (d2 === 0) { args += ')'; i++; break; } }
             args += expr[i]; i++;
           }
-          const argsInner = args.slice(1, -1);
-          const val = this.callFunction(ident, argsInner, scope);
-          result += JSON.stringify(val);
-          continue;
+          const val = this.evalExprSync(ident + args, scope);
+          result += JSON.stringify(val) + ws; continue;
         }
-        if (scope[ident] !== undefined) result += JSON.stringify(scope[ident]);
-        else if (this.vars[ident] !== undefined) result += JSON.stringify(this.vars[ident]);
-        else result += ident + ws;
-        result += ws;
+        if (ident === 'verdad') { result += 'true' + ws; continue; }
+        if (ident === 'falso')  { result += 'false' + ws; continue; }
+        const val = this.getVar(ident, scope);
+        result += (val !== undefined ? JSON.stringify(val) : ident) + ws;
         continue;
       }
-      result += expr[i];
-      i++;
+      result += expr[i]; i++;
     }
     return result;
   }
 
-  replaceVars(expr, scope) {
-    return expr.replace(/\b([a-zA-Z_]\w*)\b/g, (match) => {
-      if (scope[match] !== undefined) return scope[match];
-      if (this.vars[match] !== undefined) return this.vars[match];
-      return match;
-    });
+  evalExprSync(expr, scope) {
+    expr = expr.trim();
+    if ((expr.startsWith('"') && expr.endsWith('"')) || (expr.startsWith("'") && expr.endsWith("'"))) return expr.slice(1, -1);
+    if (!isNaN(expr) && expr !== '') return Number(expr);
+    if (expr === 'verdad' || expr === 'true') return true;
+    if (expr === 'falso' || expr === 'false') return false;
+    const funcCallMatch = expr.match(/^([a-zA-Z_]\w*)\s*\(([^)]*)\)$/);
+    if (funcCallMatch && this.funcs[funcCallMatch[1]])
+      return this.callFunctionSync(funcCallMatch[1], funcCallMatch[2], scope);
+    const val = this.getVar(expr, scope);
+    if (val !== undefined) return val;
+    const processed = this.processComplexExpr(expr, scope);
+    return Function('"use strict"; return (' + processed + ')')();
   }
 
-  callFunction(fname, argsStr, scope) {
-    if (this.callDepth > this.MAX_DEPTH) throw new Error(`Recursión máxima alcanzada en: ${fname}`);
+  callFunctionSync(fname, argsStr, scope) {
+    if (this.callDepth > this.MAX_DEPTH) throw new Error(`Recursión máxima en: ${fname}`);
     const fn = this.funcs[fname];
-    if (!fn) throw new Error(`Función no definida: ${fname}`);
-
-    const argVals = argsStr.trim() ? this.splitArgs(argsStr).map(a => this.evalExpr(a.trim(), scope)) : [];
-    const localScope = Object.assign({}, this.vars);
-    fn.params.forEach((p, i) => { localScope[p] = argVals[i] !== undefined ? argVals[i] : 0; });
-
+    if (!fn) throw new Error(`Función no definida: "${fname}"`);
+    const argVals = argsStr.trim() ? this.splitArgs(argsStr).map(a => this.evalExprSync(a.trim(), scope)) : [];
+    const localScope = Object.assign({}, this.vars, scope !== this.vars ? scope : {});
+    fn.params.forEach((p, idx) => { localScope[p] = argVals[idx] !== undefined ? argVals[idx] : 0; });
     this.callDepth++;
-    const result = this.executeLines(fn.body, 0, localScope);
+    const result = this.executeLinesSync(fn.body, 0, localScope);
     this.callDepth--;
+    Object.keys(this.vars).forEach(k => { if (localScope[k] !== undefined) this.vars[k] = localScope[k]; });
+    if (result && result.type === 'return') return result.value;
+    return null;
+  }
 
-    Object.keys(this.vars).forEach(k => {
-      if (localScope[k] !== undefined) this.vars[k] = localScope[k];
-    });
+  executeLinesSync(lines, startIdx, scope) {
+    let i = startIdx;
+    while (i < lines.length) {
+      const line = lines[i];
+      if (!line || line.startsWith('Rawr')) { i++; continue; }
+      if (line.startsWith('Gii Huu ')) { const { end } = this.extractBlock(lines, i); i = end + 1; continue; }
+      if (line.startsWith('NOOOO MORE '))
+        return { type: 'return', value: this.evalExprSync(line.slice(11).trim(), scope) };
+      if (line.startsWith('SHAREEE ')) { this.log(this.evalExprSync(line.slice(8).trim(), scope)); i++; continue; }
+      const am = line.match(/^([a-zA-Z_]\w*)\s*=\s*(.+)$/);
+      if (am) { this.setVar(am[1], this.evalExprSync(am[2].trim(), scope), scope); i++; continue; }
+      i++;
+    }
+  }
 
+  async callFunction(fname, argsStr, scope) {
+    if (this.callDepth > this.MAX_DEPTH) throw new Error(`Recursión máxima en: ${fname}`);
+    const fn = this.funcs[fname];
+    if (!fn) throw new Error(`Función no definida: "${fname}"`);
+    const argVals = argsStr.trim()
+      ? await Promise.all(this.splitArgs(argsStr).map(a => this.evalExprAsync(a.trim(), scope))) : [];
+    const localScope = Object.assign({}, this.vars, scope !== this.vars ? scope : {});
+    fn.params.forEach((p, idx) => { localScope[p] = argVals[idx] !== undefined ? argVals[idx] : 0; });
+    this.callDepth++;
+    const result = await this.executeLines(fn.body, 0, localScope);
+    this.callDepth--;
+    Object.keys(this.vars).forEach(k => { if (localScope[k] !== undefined) this.vars[k] = localScope[k]; });
     if (result && result.type === 'return') return result.value;
     return null;
   }
 
   splitArgs(argsStr) {
-    const args = [];
-    let depth3 = 0;
-    let current = '';
+    const args = []; let d = 0, cur = '';
     for (const ch of argsStr) {
-      if (ch === '(' ) depth3++;
-      if (ch === ')') depth3--;
-      if (ch === ',' && depth3 === 0) { args.push(current); current = ''; }
-      else current += ch;
+      if (ch === '(') d++;
+      if (ch === ')') d--;
+      if (ch === ',' && d === 0) { args.push(cur); cur = ''; } else cur += ch;
     }
-    if (current.trim()) args.push(current);
+    if (cur.trim()) args.push(cur);
     return args;
   }
 }
 
 // ---- UI ----
 let isRunning = false;
+let pendingInputResolve = null;
 
 function runCode() {
   if (isRunning) return;
@@ -383,43 +520,83 @@ function runCode() {
   const outputArea = document.getElementById('output-area');
   outputArea.innerHTML = '';
   isRunning = true;
-
   const runBtn = document.getElementById('run-btn');
   runBtn.textContent = 'Ejecutando...';
   runBtn.disabled = true;
-
   const statusBar = document.getElementById('status-bar');
   statusBar.textContent = 'Procesando...';
-
   const startTime = Date.now();
 
-  setTimeout(() => {
-    try {
-      addOutputLine('NavaScript - Inicio de ejecución', 'system');
-      const interp = new NavascriptInterpreter((msg, type) => {
-        addOutputLine(msg, type || 'text');
-      });
-      interp.runrun(code);
-      const elapsed = Date.now() - startTime;
-      document.getElementById('exec-time').textContent = `${elapsed}ms`;
-      addOutputLine(`Ejecución terminada (${elapsed}ms)`, 'system');
-      statusBar.textContent = `Listo (${elapsed}ms)`;
-    } catch(e) {
-      addOutputLine('ERROR: ' + e.message, 'error');
-      statusBar.textContent = 'Error en ejecución';
-    } finally {
-      isRunning = false;
-      runBtn.textContent = 'RUNRUN';
-      runBtn.disabled = false;
-    }
-  }, 10);
+  async function askInput(prompt) {
+    return new Promise(resolve => { pendingInputResolve = resolve; showInputPrompt(prompt); });
+  }
+
+  addOutputLine('NavaScript — Inicio de ejecución', 'system');
+  const interp = new NavascriptInterpreter(
+    (msg, type) => addOutputLine(msg, type || 'text'), askInput
+  );
+
+  interp.runrun(code).then(() => {
+    const elapsed = Date.now() - startTime;
+    document.getElementById('exec-time').textContent = `${elapsed}ms`;
+    addOutputLine(`Ejecución terminada (${elapsed}ms)`, 'system');
+    statusBar.textContent = `Listo (${elapsed}ms)`;
+  }).catch(e => {
+    addOutputLine('ERROR: ' + e.message, 'error');
+    statusBar.textContent = 'Error en ejecución';
+  }).finally(() => {
+    isRunning = false;
+    runBtn.textContent = 'RUNRUN';
+    runBtn.disabled = false;
+    hideInputPrompt();
+  });
+}
+
+function showInputPrompt(promptText) {
+  const area = document.getElementById('output-area');
+  const empty = area.querySelector('.output-empty');
+  if (empty) empty.remove();
+  const container = document.createElement('div');
+  container.className = 'input-prompt-container';
+  container.id = 'input-prompt';
+  const label = document.createElement('div');
+  label.className = 'input-prompt-label';
+  label.textContent = promptText ? `› ${promptText}` : '› Ingresa un valor:';
+  const row = document.createElement('div');
+  row.className = 'input-prompt-row';
+  const inputEl = document.createElement('input');
+  inputEl.type = 'text';
+  inputEl.className = 'input-prompt-field';
+  inputEl.placeholder = 'Escribe aquí y presiona Enter...';
+  inputEl.autocomplete = 'off';
+  inputEl.spellcheck = false;
+  const btn = document.createElement('button');
+  btn.className = 'input-prompt-btn';
+  btn.textContent = 'OK';
+  function submit() {
+    const val = inputEl.value;
+    container.remove();
+    addOutputLine(`  ← ${val}`, 'info');
+    if (pendingInputResolve) { pendingInputResolve(val); pendingInputResolve = null; }
+  }
+  inputEl.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); submit(); } });
+  btn.addEventListener('click', submit);
+  row.appendChild(inputEl); row.appendChild(btn);
+  container.appendChild(label); container.appendChild(row);
+  area.appendChild(container);
+  area.scrollTop = area.scrollHeight;
+  setTimeout(() => inputEl.focus(), 50);
+}
+
+function hideInputPrompt() {
+  const p = document.getElementById('input-prompt');
+  if (p) p.remove();
 }
 
 function addOutputLine(text, type = 'text') {
   const area = document.getElementById('output-area');
   const empty = area.querySelector('.output-empty');
   if (empty) empty.remove();
-
   const div = document.createElement('div');
   div.className = 'output-line';
   const arrow = document.createElement('span');
@@ -428,18 +605,16 @@ function addOutputLine(text, type = 'text') {
   const textSpan = document.createElement('span');
   textSpan.className = 'output-' + type;
   textSpan.textContent = String(text);
-  
-  div.appendChild(arrow);
-  div.appendChild(textSpan);
+  div.appendChild(arrow); div.appendChild(textSpan);
   area.appendChild(div);
   area.scrollTop = area.scrollHeight;
 }
 
 function clearOutput() {
-  const area = document.getElementById('output-area');
-  area.innerHTML = '<div class="output-empty">Esperando ejecución...</div>';
+  document.getElementById('output-area').innerHTML = '<div class="output-empty">Esperando ejecución...</div>';
   document.getElementById('exec-time').textContent = '';
   document.getElementById('status-bar').textContent = 'Listo';
+  hideInputPrompt();
 }
 
 function loadExample() {
@@ -451,7 +626,7 @@ function loadFile(event) {
   const file = event.target.files[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = (e) => {
+  reader.onload = e => {
     document.getElementById('code-editor').value = e.target.result;
     document.getElementById('filename-input').value = file.name;
     document.getElementById('status-bar').textContent = `Archivo cargado: ${file.name}`;
@@ -462,21 +637,14 @@ function loadFile(event) {
 
 function downloadFile() {
   const code = document.getElementById('code-editor').value;
-  let filename = document.getElementById('filename-input').value.trim();
-  
-  if (!filename) filename = 'script.ns';
+  let filename = document.getElementById('filename-input').value.trim() || 'script.ns';
   if (!filename.endsWith('.ns')) filename += '.ns';
-
   const blob = new Blob([code], { type: 'text/plain' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
   document.getElementById('status-bar').textContent = `Descargado: ${filename}`;
 }
 
@@ -489,19 +657,14 @@ function toggleSheet() {
   arrow.textContent = sheetOpen ? '▼' : '▶';
 }
 
-document.addEventListener('keydown', (e) => {
-  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-    e.preventDefault();
-    runCode();
-  }
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); runCode(); }
 });
 
-document.getElementById('code-editor').addEventListener('keydown', (e) => {
+document.getElementById('code-editor').addEventListener('keydown', e => {
   if (e.key === 'Tab') {
     e.preventDefault();
-    const ta = e.target;
-    const start = ta.selectionStart;
-    const end = ta.selectionEnd;
+    const ta = e.target, start = ta.selectionStart, end = ta.selectionEnd;
     ta.value = ta.value.slice(0, start) + '  ' + ta.value.slice(end);
     ta.selectionStart = ta.selectionEnd = start + 2;
   }

@@ -1,6 +1,6 @@
 # NavaScript
 
-> Un lenguaje de programación interpretado con sintaxis propia, IDE web, extensión para VS Code e intérprete CLI.
+> Un lenguaje de programación interpretado con sintaxis propia, IDE web y extensión para VS Code.
 
 [![Licencia: MIT](https://img.shields.io/badge/Licencia-MIT-white.svg)](https://opensource.org/licenses/MIT)
 [![VS Code Marketplace](https://img.shields.io/badge/VS%20Code-En%20Revisión-blue.svg)](https://marketplace.visualstudio.com)
@@ -15,24 +15,12 @@
 
 * **IDE web**: escribe y ejecuta código directamente en el navegador.
 * **Extensión para VS Code**: resaltado de sintaxis y ejecución integrada.
-* **Intérprete CLI**: ejecuta scripts `.ns` desde la terminal.
 
 Diseñado para ser simple y divertido, con soporte para variables, funciones, condicionales, bucles, recursión y más.
 
 ---
 
-## 🖼 Capturas de pantalla
-
-<img src="capture.jpeg" alt="alt text" width="650" height="300">
-<img src="image.png" alt="alt text" width="650" height="600">
-<img src="code1.png" alt="alt text" width="650" height="350">
-<img src="image-1.png" alt="alt text" width="650" height="300">
-<img src="image-2.png" alt="alt text" width="650" height="300">
-<img src="image-3.png" alt="alt text" width="650" height="300">
-
----
-
-## Componentes principales
+## ⚙️ Componentes principales
 
 ### 1️⃣ IDE Web
 
@@ -61,7 +49,7 @@ Agrega soporte completo para NavaScript dentro de Visual Studio Code.
 * Consola de salida dedicada
 * Compatible con todos los archivos `.ns`
 
-**Estado:** en revisión en el Marketplace de VS Code.
+**Estado:** Disponible en la Marketplace de VS Code
 
 **Instalación manual:**
 
@@ -71,15 +59,15 @@ Agrega soporte completo para NavaScript dentro de Visual Studio Code.
 
 ---
 
-## Cómo empezar
+## 👨‍💻 Cómo empezar
 
-### Opción A — IDE Web (sin instalación)
+### • Opción A — IDE Web (sin instalación)
 
 Ve a **[NavaScript IDE Oficial](https://AngelDev2343.github.io/NavaScript)**, escribe tu código y presiona `RUNRUN` o `Ctrl+Enter`.
 
----
 
-### Opción B — Extensión para VS Code
+
+### • Opción B — Extensión para VS Code
 
 1. Descarga el archivo `.vsix` desde la página de [Releases](https://github.com/AngelDev2343/NavaScript/releases/tag/NS-Extension).
 2. Abre VS Code.
@@ -89,7 +77,18 @@ Ve a **[NavaScript IDE Oficial](https://AngelDev2343.github.io/NavaScript)**, es
 
 ---
 
-## Referencia de sintaxis
+## 📸 Capturas de pantalla
+
+<img src="capture.jpeg" alt="alt text" width="1000" height="500">
+<img src="image.png" alt="alt text" width="1000" height="1100">
+<img src="code1.png" alt="alt text" width="1000" height="700">
+<img src="image-1.png" alt="alt text" width="1000" height="600">
+<img src="image-2.png" alt="alt text" width="1000" height="600">
+<img src="image-3.png" alt="alt text" width="1000" height="600">
+
+---
+
+## 🔄 Referencia de sintaxis
 
 NavaScript usa un conjunto fijo de palabras clave con distinción entre mayúsculas y minúsculas. Todas las palabras clave deben escribirse exactamente como se muestra.
 
@@ -325,7 +324,7 @@ SHAREEE fib(10)
 ---
 
 
-## Licencia
+## 📜 Licencia
 
 Este proyecto está bajo la **Licencia MIT**.  
 Consulta el archivo [LICENSE](./LICENSE) para más detalles.

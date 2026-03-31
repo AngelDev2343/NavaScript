@@ -10,6 +10,7 @@
   --accent-hover: #cccccc;
   --green: #4ade80;
   --error: #f87171;
+  --input-accent: #7c6af7;
   --font-ui: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: 'Space Mono', monospace;
 }
@@ -30,7 +31,7 @@ body {
   overflow: hidden;
 }
 
-/* Header minimalista */
+/* Header */
 .header {
   padding: 12px 20px;
   border-bottom: 1px solid var(--border);
@@ -58,7 +59,7 @@ body {
   align-items: center;
 }
 
-/* Diseño principal */
+/* Layout principal */
 .main-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -67,7 +68,7 @@ body {
   overflow: hidden;
 }
 
-/* Barra de herramientas */
+/* Toolbar */
 .toolbar {
   grid-column: 1 / -1;
   display: flex;
@@ -219,6 +220,60 @@ body {
 .output-info { color: var(--muted); }
 .output-system { color: var(--green); }
 .output-empty { color: var(--muted); font-style: italic; text-align: center; margin-top: 20px; }
+
+/* Input prompt inline */
+.input-prompt-container {
+  margin: 8px 0;
+  padding: 10px 12px;
+  border: 1px solid var(--input-accent);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--input-accent) 8%, var(--bg));
+}
+
+.input-prompt-label {
+  font-size: 0.82rem;
+  color: var(--input-accent);
+  margin-bottom: 8px;
+  word-break: break-word;
+}
+
+.input-prompt-row {
+  display: flex;
+  gap: 8px;
+}
+
+.input-prompt-field {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  padding: 5px 10px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.input-prompt-field:focus {
+  border-color: var(--input-accent);
+}
+
+.input-prompt-btn {
+  background: var(--input-accent);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 14px;
+  font-size: 0.82rem;
+  font-family: var(--font-ui);
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.input-prompt-btn:hover {
+  opacity: 0.85;
+}
 
 /* Cheatsheet */
 .cheatsheet-panel {

@@ -10,7 +10,6 @@
 <body>
 
 <header class="header">
-  <!-- Fallback para el logo si la imagen no existe -->
   <div class="wolf-emoji"><img src="NS.png" alt="Navascript Logo" width="50px" onerror="this.style.display='none'; this.parentNode.textContent='🐺'"></div>
   <div class="logo">NavaScript</div>
   <div class="header-sub">IDE Oficial</div>
@@ -29,7 +28,6 @@
 
   <div class="editor-panel">
     <div class="panel-header">
-      <!-- Input para cambiar el nombre del archivo dinámicamente -->
       <input type="text" id="filename-input" class="filename-input" value="codigo.ns" spellcheck="false" title="Haz clic para cambiar el nombre del archivo">
     </div>
     <textarea id="code-editor" spellcheck="false" placeholder="// Escribe tu código Navascript aquí...
@@ -70,12 +68,20 @@ SHAREEE x"></textarea>
         <div class="kw-desc">Imprimir en salida</div>
       </div>
       <div class="keyword-card">
-        <div class="kw-word">si cond { } sino { }</div>
-        <div class="kw-desc">Condicional</div>
+        <div class="kw-word">SHAREEE x con 2 decimales</div>
+        <div class="kw-desc">Imprimir con decimales fijos</div>
+      </div>
+      <div class="keyword-card">
+        <div class="kw-word">si cond { } sino si { } sino { }</div>
+        <div class="kw-desc">Condicional con ramos</div>
       </div>
       <div class="keyword-card">
         <div class="kw-word">mientras cond { }</div>
         <div class="kw-desc">Bucle while</div>
+      </div>
+      <div class="keyword-card">
+        <div class="kw-word">para i = 0 hasta 10 { }</div>
+        <div class="kw-desc">Bucle for clásico</div>
       </div>
       <div class="keyword-card">
         <div class="kw-word">Grr cond { }</div>
@@ -83,15 +89,19 @@ SHAREEE x"></textarea>
       </div>
       <div class="keyword-card">
         <div class="kw-word">Zap var / Boom var</div>
-        <div class="kw-desc">Incrementar / Decrementar</div>
+        <div class="kw-desc">Incrementar / Decrementar (solo números)</div>
       </div>
       <div class="keyword-card">
-        <div class="kw-word">Uuh 1000</div>
-        <div class="kw-desc">Pausa en ms</div>
+        <div class="kw-word">lobo aparece n = PREGUNTA "¿Edad?"</div>
+        <div class="kw-desc">Pedir input al usuario</div>
       </div>
       <div class="keyword-card">
         <div class="kw-word">Rawr texto</div>
         <div class="kw-desc">Comentario</div>
+      </div>
+      <div class="keyword-card">
+        <div class="kw-word">verdad / falso</div>
+        <div class="kw-desc">Valores booleanos</div>
       </div>
     </div>
   </div>
