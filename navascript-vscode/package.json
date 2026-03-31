@@ -1,0 +1,77 @@
+{
+  "name": "navascript-support",
+  "displayName": "NavaScript Debugger Support",
+  "description": "Soporte para NavaScript — sintaxis, ejecución y resaltado para archivos .ns",
+  "version": "1.0.1",
+  "publisher": "AngelDev2343",
+  "icon": "images/NS.png",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AngelDev2343/NavaScript"
+  },
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Debuggers"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onLanguage:navascript",
+    "onCommand:navascript.run"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "navascript",
+        "aliases": ["NavaScript", "ns"],
+        "extensions": [".ns"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "navascript",
+        "scopeName": "source.ns",
+        "path": "./syntaxes/ns.tmLanguage.json"
+      }
+    ],
+    "iconThemes": [
+      {
+        "id": "navascript-icons",
+        "label": "NavaScript File Icons",
+        "path": "./icons/ns-icon-theme.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "navascript.run",
+        "title": "NS: Ejecutar RUNRUN",
+        "category": "NavaScript",
+        "icon": "$(play)"
+      }
+    ],
+    "debuggers": [
+      {
+        "type": "navascript",
+        "label": "NavaScript Debug",
+        "languages": ["navascript"]
+      }
+    ],
+    "breakpoints": [
+      { "language": "navascript" }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "navascript.run",
+          "group": "navigation",
+          "when": "resourceExtname == .ns"
+        }
+      ]
+    }
+  }
+}

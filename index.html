@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NavaScript IDE</title>
+<link rel="stylesheet" href="styles.css"> 
+<link rel="icon" type="image/png" href="NS.png">
+</head>
+<body>
+
+<header class="header">
+  <!-- Fallback para el logo si la imagen no existe -->
+  <div class="wolf-emoji"><img src="NS.png" alt="Navascript Logo" width="50px" onerror="this.style.display='none'; this.parentNode.textContent='🐺'"></div>
+  <div class="logo">NavaScript</div>
+  <div class="header-sub">IDE Oficial</div>
+</header>
+
+<div class="main-layout" id="main-layout">
+  <div class="toolbar">
+    <button class="btn btn-run" id="run-btn" onclick="runCode()">RUNRUN</button>
+    <button class="btn" onclick="loadExample()">Cargar Ejemplo</button>
+    <label class="file-label" for="file-input">Subir Archivo</label>
+    <input type="file" id="file-input" accept=".ns,.txt" onchange="loadFile(event)">
+    <button class="btn" onclick="downloadFile()">Descargar .ns</button>
+    <button class="btn" onclick="clearOutput()">Limpiar</button>
+    <div class="status-bar" id="status-bar">Listo</div>
+  </div>
+
+  <div class="editor-panel">
+    <div class="panel-header">
+      <!-- Input para cambiar el nombre del archivo dinámicamente -->
+      <input type="text" id="filename-input" class="filename-input" value="codigo.ns" spellcheck="false" title="Haz clic para cambiar el nombre del archivo">
+    </div>
+    <textarea id="code-editor" spellcheck="false" placeholder="// Escribe tu código Navascript aquí...
+// Usa Rawr para comentarios
+lobo aparece x = 10
+SHAREEE x"></textarea>
+  </div>
+
+  <div class="output-panel">
+    <div class="panel-header">
+      <span>Salida</span>
+      <span id="exec-time"></span>
+    </div>
+    <div id="output-area">
+      <div class="output-empty">Esperando ejecución...</div>
+    </div>
+  </div>
+
+  <div class="cheatsheet-panel">
+    <button class="cheatsheet-toggle" onclick="toggleSheet()">
+      Guía de Referencia <span id="sheet-arrow">▼</span>
+    </button>
+    <div class="cheatsheet-content" id="sheet-content">
+      <div class="keyword-card">
+        <div class="kw-word">lobo aparece x = 5</div>
+        <div class="kw-desc">Declarar variable</div>
+      </div>
+      <div class="keyword-card">
+        <div class="kw-word">Gii Huu fn(a,b) { }</div>
+        <div class="kw-desc">Definir función</div>
+      </div>
+      <div class="keyword-card">
+        <div class="kw-word">NOOOO MORE val</div>
+        <div class="kw-desc">Retornar valor</div>
+      </div>
+      <div class="keyword-card">
+        <div class="kw-word">SHAREEE exp</div>
+        <div class="kw-desc">Imprimir en salida</div>
+      </div>
+      <div class="keyword-card">
+        <div class="kw-word">si cond { } sino { }</div>
+        <div class="kw-desc">Condicional</div>
+      </div>
+      <div class="keyword-card">
+        <div class="kw-word">mientras cond { }</div>
+        <div class="kw-desc">Bucle while</div>
+      </div>
+      <div class="keyword-card">
+        <div class="kw-word">Grr cond { }</div>
+        <div class="kw-desc">Bucle while invertido</div>
+      </div>
+      <div class="keyword-card">
+        <div class="kw-word">Zap var / Boom var</div>
+        <div class="kw-desc">Incrementar / Decrementar</div>
+      </div>
+      <div class="keyword-card">
+        <div class="kw-word">Uuh 1000</div>
+        <div class="kw-desc">Pausa en ms</div>
+      </div>
+      <div class="keyword-card">
+        <div class="kw-word">Rawr texto</div>
+        <div class="kw-desc">Comentario</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script> 
+
+</body>
+</html>

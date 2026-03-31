@@ -1,0 +1,14 @@
+SHAREEE "=========================================="
+SHAREEE   "NAVASCRIPT - Ejemplo"
+SHAREEE "=========================================="
+
+Rawr --- Variables ---
+lobo aparece x = 10
+lobo aparece y = 5
+SHAREEE "Valores iniciales: x=" + x + " y=" + y
+
+Rawr --- Función básica ---
+Gii Huu sumar(a, b) {
+  NOOOO MORE a + b
+}
+SHAREEE "Suma de x+y = " + sumar(x, y)

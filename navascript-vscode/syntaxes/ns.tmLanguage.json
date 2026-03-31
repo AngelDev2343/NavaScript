@@ -1,0 +1,47 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "NavaScript",
+  "patterns": [
+    {
+      "name": "comment.line.navascript",
+      "match": "Rawr.*$",
+      "comment": "Comentarios de la manada"
+    },
+    {
+      "name": "keyword.control.navascript",
+      "match": "\\b(si|sino|mientras|Grr|NOOOO MORE)\\b"
+    },
+    {
+      "name": "keyword.declaration.navascript",
+      "match": "\\b(lobo aparece|Gii Huu)\\b"
+    },
+    {
+      "name": "support.function.navascript",
+      "match": "\\b(SHAREEE|Zap|Boom|Uuh)\\b"
+    },
+    {
+      "name": "string.quoted.double.navascript",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.navascript",
+          "match": "\\\\."
+        }
+      ]
+    },
+    {
+      "name": "constant.numeric.navascript",
+      "match": "\\b\\d+(\\.\\d+)?\\b"
+    },
+    {
+      "name": "constant.language.boolean.navascript",
+      "match": "\\b(verdad|falso|true|false)\\b"
+    },
+    {
+      "name": "variable.name.navascript",
+      "match": "\\b[a-zA-Z_]\\w*\\b"
+    }
+  ],
+  "scopeName": "source.ns"
+}
