@@ -35,8 +35,6 @@ Accede desde [NavaScript IDE Oficial](https://AngelDev2343.github.io/NavaScript)
 * Referencia rápida de sintaxis integrada
 * Atajo: `Ctrl+Enter` / `Cmd+Enter` para ejecutar
 
----
-
 ### 2️⃣ Extensión para VS Code
 
 Agrega soporte completo para NavaScript dentro de Visual Studio Code.
@@ -57,6 +55,20 @@ Agrega soporte completo para NavaScript dentro de Visual Studio Code.
 2. Abre VS Code → `Extensiones` → `···` → `Instalar desde VSIX...`
 3. Selecciona el archivo y empieza a programar
 
+### 3️⃣ IDE Oficial para Windows
+
+Agrega soporte completo para NavaScript en Windows 10/11
+
+**Características:**
+
+* Editor de código con soporte `.ns`
+* Intérprete integrado en el navegador (sin servidor)
+* Panel de salida en tiempo real
+* Carga y descarga de archivos `.ns`
+* Referencia rápida de sintaxis integrada
+* Atajo: `Ctrl+Enter` / `Cmd+Enter` para ejecutar
+* Programa totalmente **PORTABLE**
+
 ---
 
 ## 👨‍💻 Cómo empezar
@@ -74,6 +86,15 @@ Ve a **[NavaScript IDE Oficial](https://AngelDev2343.github.io/NavaScript)**, es
 3. Ve a `Extensiones` → `···` → `Instalar desde VSIX...`.
 4. Selecciona el archivo descargado.
 5. Crea un archivo con extensión `.ns` y empieza a programar.
+
+### • Opción C — IDE Oficial para Windows
+
+1. Descarga el archivo `NavaScript-IDE-Desktop.Windows.32-64.bits.zip`.
+2. Extraelo dentro de una carpeta.
+3. Executa `navascript_ide.exe`.
+4. Y listo empieza a programar.
+
+**Descargar [NavaScript-IDE-Desktop.Windows.32-64.bits.zip](https://github.com/AngelDev2343/NavaScript/releases/download/NS-IDE/NavaScript-IDE-Desktop.Windows.32-64.bits.zip)**
 
 ---
 
