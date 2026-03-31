@@ -30,10 +30,12 @@
     <div class="panel-header">
       <input type="text" id="filename-input" class="filename-input" value="codigo.ns" spellcheck="false" title="Haz clic para cambiar el nombre del archivo">
     </div>
-    <textarea id="code-editor" spellcheck="false" placeholder="// Escribe tu código Navascript aquí...
-// Usa Rawr para comentarios
+    <div class="editor-wrapper">
+      <div id="highlight-layer" aria-hidden="true"></div>
+      <textarea id="code-editor" spellcheck="false" placeholder="Rawr Escribe tu código NavaScript aquí...
 lobo aparece x = 10
 SHAREEE x"></textarea>
+    </div>
   </div>
 
   <div class="output-panel">
@@ -107,7 +109,81 @@ SHAREEE x"></textarea>
   </div>
 </div>
 
-<script src="script.js"></script> 
+<script src="script.js"></script>
+
+<script>
+(function() {
+  const RULES = [
+    { re: /(Rawr[^\n]*)/, cls: 'hl-comment' },
+    { re: /\b(NOOOO MORE|sino si|sino|si|mientras|para|hasta|Grr)\b/, cls: 'hl-control' },
+    { re: /\b(lobo aparece|Gii Huu)\b/, cls: 'hl-decl' },
+    { re: /\b(SHAREEE|Zap|Boom|Uuh|PREGUNTA)\b/, cls: 'hl-builtin' },
+    { re: /(\"[^\"]*\"|'[^']*')/, cls: 'hl-string' },
+    { re: /\b(\d+(?:\.\d+)?)\b/, cls: 'hl-number' },
+    { re: /\b(verdad|falso|true|false)\b/, cls: 'hl-bool' },
+    { re: /(\b[a-zA-Z_]\w*\s*(?=\())/, cls: 'hl-fn' },
+    { re: /\b(con|decimales)\b/, cls: 'hl-control' },
+  ];
+
+  function escapeHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function tokenizeLine(line) {
+    if (line === '') return '';
+    let out = '';
+    let remaining = line;
+    while (remaining.length > 0) {
+      let best = null, bestIdx = Infinity, bestRule = null;
+      for (const rule of RULES) {
+        const m = remaining.match(rule.re);
+        if (m && m.index < bestIdx) {
+          best = m;
+          bestIdx = m.index;
+          bestRule = rule;
+        }
+      }
+      if (!best) { out += escapeHtml(remaining); break; }
+      if (bestIdx > 0) out += escapeHtml(remaining.slice(0, bestIdx));
+      out += `<span class="${bestRule.cls}">${escapeHtml(best[0])}</span>`;
+      remaining = remaining.slice(bestIdx + best[0].length);
+    }
+    return out;
+  }
+
+  function highlight(code) {
+    return code.split('\n').map(tokenizeLine).join('\n');
+  }
+
+  const ta = document.getElementById('code-editor');
+  const hl = document.getElementById('highlight-layer');
+
+  function syncScroll() {
+    hl.scrollTop = ta.scrollTop;
+    hl.scrollLeft = ta.scrollLeft;
+  }
+
+  function update() {
+    hl.innerHTML = highlight(ta.value) + '\n';
+  }
+
+  ta.addEventListener('input', update);
+  ta.addEventListener('scroll', syncScroll);
+  ta.addEventListener('keydown', syncScroll);
+  update();
+
+  const origLoadExample = window.loadExample;
+  window.loadExample = function() {
+    origLoadExample && origLoadExample();
+    setTimeout(update, 0);
+  };
+  const origLoadFile = window.loadFile;
+  window.loadFile = function(e) {
+    origLoadFile && origLoadFile(e);
+    setTimeout(update, 50);
+  };
+})();
+</script>
 
 </body>
 </html>
