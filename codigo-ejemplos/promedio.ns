@@ -1,0 +1,195 @@
+Rawr === CALCULADORA DE PROMEDIO ===
+
+lobo aparece cal1 = 0
+lobo aparece cal2 = 0
+lobo aparece cal3 = 0
+lobo aparece cal4 = 0
+lobo aparece cal5 = 0
+lobo aparece cal6 = 0
+lobo aparece cal7 = 0
+lobo aparece cal8 = 0
+lobo aparece cal9 = 0
+lobo aparece cal10 = 0
+lobo aparece mat1 = 0
+lobo aparece mat2 = 0
+lobo aparece mat3 = 0
+lobo aparece mat4 = 0
+lobo aparece mat5 = 0
+lobo aparece mat6 = 0
+lobo aparece mat7 = 0
+lobo aparece mat8 = 0
+lobo aparece mat9 = 0
+lobo aparece mat10 = 0
+lobo aparece total = 0
+lobo aparece promedio = 0
+lobo aparece num = 0
+
+SHAREEE "=============================="
+SHAREEE "  CALCULADORA DE PROMEDIO NS  "
+SHAREEE "=============================="
+SHAREEE ""
+SHAREEE "Calificaciones del 0 al 10"
+SHAREEE "Cuantas materias tienes?"
+SHAREEE "(minimo 1, maximo 10)"
+SHAREEE ""
+
+num = PREGUNTA "Numero de materias:"
+
+SHAREEE ""
+SHAREEE "--- Ingresa nombre y calificacion ---"
+SHAREEE ""
+
+si num >= 1 {
+  mat1 = PREGUNTA "Nombre materia 1:"
+  SHAREEE "Calificacion de materia 1:"
+  cal1 = PREGUNTA ">>>"
+}
+si num >= 2 {
+  mat2 = PREGUNTA "Nombre materia 2:"
+  SHAREEE "Calificacion de materia 2:"
+  cal2 = PREGUNTA ">>>"
+}
+si num >= 3 {
+  mat3 = PREGUNTA "Nombre materia 3:"
+  SHAREEE "Calificacion de materia 3:"
+  cal3 = PREGUNTA ">>>"
+}
+si num >= 4 {
+  mat4 = PREGUNTA "Nombre materia 4:"
+  SHAREEE "Calificacion de materia 4:"
+  cal4 = PREGUNTA ">>>"
+}
+si num >= 5 {
+  mat5 = PREGUNTA "Nombre materia 5:"
+  SHAREEE "Calificacion de materia 5:"
+  cal5 = PREGUNTA ">>>"
+}
+si num >= 6 {
+  mat6 = PREGUNTA "Nombre materia 6:"
+  SHAREEE "Calificacion de materia 6:"
+  cal6 = PREGUNTA ">>>"
+}
+si num >= 7 {
+  mat7 = PREGUNTA "Nombre materia 7:"
+  SHAREEE "Calificacion de materia 7:"
+  cal7 = PREGUNTA ">>>"
+}
+si num >= 8 {
+  mat8 = PREGUNTA "Nombre materia 8:"
+  SHAREEE "Calificacion de materia 8:"
+  cal8 = PREGUNTA ">>>"
+}
+si num >= 9 {
+  mat9 = PREGUNTA "Nombre materia 9:"
+  SHAREEE "Calificacion de materia 9:"
+  cal9 = PREGUNTA ">>>"
+}
+si num >= 10 {
+  mat10 = PREGUNTA "Nombre materia 10:"
+  SHAREEE "Calificacion de materia 10:"
+  cal10 = PREGUNTA ">>>"
+}
+
+Rawr === Calcular total ===
+si num == 1 {
+  total = cal1
+}
+si num == 2 {
+  total = cal1 + cal2
+}
+si num == 3 {
+  total = cal1 + cal2 + cal3
+}
+si num == 4 {
+  total = cal1 + cal2 + cal3 + cal4
+}
+si num == 5 {
+  total = cal1 + cal2 + cal3 + cal4 + cal5
+}
+si num == 6 {
+  total = cal1 + cal2 + cal3 + cal4 + cal5 + cal6
+}
+si num == 7 {
+  total = cal1 + cal2 + cal3 + cal4 + cal5 + cal6 + cal7
+}
+si num == 8 {
+  total = cal1 + cal2 + cal3 + cal4 + cal5 + cal6 + cal7 + cal8
+}
+si num == 9 {
+  total = cal1 + cal2 + cal3 + cal4 + cal5 + cal6 + cal7 + cal8 + cal9
+}
+si num == 10 {
+  total = cal1 + cal2 + cal3 + cal4 + cal5 + cal6 + cal7 + cal8 + cal9 + cal10
+}
+
+promedio = total / num
+
+SHAREEE ""
+SHAREEE "=============================="
+SHAREEE "         TU REPORTE           "
+SHAREEE "=============================="
+SHAREEE ""
+
+si num >= 1 {
+  SHAREEE "  " + mat1 + ":  " + cal1
+}
+si num >= 2 {
+  SHAREEE "  " + mat2 + ":  " + cal2
+}
+si num >= 3 {
+  SHAREEE "  " + mat3 + ":  " + cal3
+}
+si num >= 4 {
+  SHAREEE "  " + mat4 + ":  " + cal4
+}
+si num >= 5 {
+  SHAREEE "  " + mat5 + ":  " + cal5
+}
+si num >= 6 {
+  SHAREEE "  " + mat6 + ":  " + cal6
+}
+si num >= 7 {
+  SHAREEE "  " + mat7 + ":  " + cal7
+}
+si num >= 8 {
+  SHAREEE "  " + mat8 + ":  " + cal8
+}
+si num >= 9 {
+  SHAREEE "  " + mat9 + ":  " + cal9
+}
+si num >= 10 {
+  SHAREEE "  " + mat10 + ":  " + cal10
+}
+
+SHAREEE ""
+SHAREEE "  Materias:       " + num
+SHAREEE "  Suma total:     " + total
+SHAREEE "  PROMEDIO FINAL: " + promedio
+SHAREEE ""
+SHAREEE "=============================="
+
+si promedio == 10 {
+  SHAREEE "  Calificacion: A+ - Perfecto!"
+} sino {
+  si promedio >= 9 {
+    SHAREEE "  Calificacion: A - Excelente!"
+  } sino {
+    si promedio >= 8 {
+      SHAREEE "  Calificacion: B - Muy bien!"
+    } sino {
+      si promedio >= 7 {
+        SHAREEE "  Calificacion: C - Bien, puedes mejorar"
+      } sino {
+        si promedio >= 6 {
+          SHAREEE "  Calificacion: D - Justo pasando"
+        } sino {
+          SHAREEE "  Calificacion: F - Reprobado, animo!"
+        }
+      }
+    }
+  }
+}
+
+SHAREEE "=============================="
+SHAREEE "      Hecho con NavaScript    "
+SHAREEE "=============================="
