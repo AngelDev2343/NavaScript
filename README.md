@@ -157,6 +157,16 @@ Imprime un valor en la consola de salida. Soporta concatenación de cadenas con 
 
 ---
 
+### Entrada
+
+```ns
+lobo aparece a = PREGUNTA "¿Valor?"
+```
+
+`lobo aparece` define la variable, `PREGUNTA` le da el valor conforme a la entrada del usuario.
+
+---
+
 ### Comentarios
 
 ```ns
