@@ -20,6 +20,22 @@ Diseñado para ser simple y divertido, con soporte para variables, funciones, co
 
 ---
 
+## ❓ ¿Por qué NavaScript?
+
+NavaScript nació el 31 de marzo de 2026, básicamente en son de broma.
+Soy estudiante de preparatoria y desarrollador, y tengo un profesor de programación que se apellida Nava — famoso entre sus alumnos por tener frases sumamente míticas y graciosas. El nombre del lenguaje es una mezcla directa entre "Nava" y "JavaScript", y el logo no es ninguna coincidencia.
+
+Las palabras clave del lenguaje (SHAREEE, lobo aparece, Gii Huu, NOOOO MORE...) están inspiradas en esas frases. Como las frases reales son limitadas, algunas fueron inventadas para poder cubrir todas las funciones del lenguaje — pero el espíritu es el mismo.
+
+El intérprete, el IDE web, el IDE de escritorio para Windows y la extensión para VS Code — fue construido en aproximadamente 5 a 6 horas, y es la primera vez que hago algo así. Nunca antes había construido un lenguaje de programación.
+
+Por ahora solo algunos amigos saben que existe. El profe Nava no tiene idea — estamos de vacaciones. Quién sabe qué cara ponga cuando se entere.
+No nació para ser el próximo Python. Nació para hacer reír, y de camino terminó siendo un lenguaje 100% funcional con intérprete, IDE web, IDE de escritorio y extensión para VS Code.
+
+A veces los mejores proyectos empiezan como una broma.
+
+---
+
 ## ⚙️ Componentes principales
 
 ### 1️⃣ IDE Web
