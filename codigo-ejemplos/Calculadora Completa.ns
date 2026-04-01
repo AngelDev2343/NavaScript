@@ -1,0 +1,78 @@
+Rawr === CALCULADORA NAVASCRIPT ===
+
+Gii Huu sumar(a, b) {
+  NOOOO MORE a + b
+}
+
+Gii Huu restar(a, b) {
+  NOOOO MORE a - b
+}
+
+Gii Huu multiplicar(a, b) {
+  NOOOO MORE a * b
+}
+
+Gii Huu dividir(a, b) {
+  si b == 0 {
+    SHAREEE "Error: no se puede dividir entre 0"
+    NOOOO MORE 0
+  }
+  NOOOO MORE a / b
+}
+
+Gii Huu potencia(a, b) {
+  lobo aparece res = 1
+  lobo aparece i = 0
+  mientras i < b {
+    res = res * a
+    Zap i
+  }
+  NOOOO MORE res
+}
+
+SHAREEE "=============================="
+SHAREEE "   CALCULADORA NAVASCRIPT     "
+SHAREEE "=============================="
+SHAREEE ""
+SHAREEE "Operaciones disponibles:"
+SHAREEE "  1 -> Suma"
+SHAREEE "  2 -> Resta"
+SHAREEE "  3 -> Multiplicacion"
+SHAREEE "  4 -> Division"
+SHAREEE "  5 -> Potencia"
+SHAREEE ""
+
+lobo aparece op = PREGUNTA "Elige una operacion (1-5):"
+lobo aparece x = PREGUNTA "Primer numero:"
+lobo aparece y = PREGUNTA "Segundo numero:"
+
+SHAREEE ""
+SHAREEE "--- Resultado ---"
+
+si op == 1 {
+  SHAREEE x + " + " + y + " = " + sumar(x, y)
+} sino {
+  si op == 2 {
+    SHAREEE x + " - " + y + " = " + restar(x, y)
+  } sino {
+    si op == 3 {
+      SHAREEE x + " * " + y + " = " + multiplicar(x, y)
+    } sino {
+      si op == 4 {
+        SHAREEE x + " / " + y + " = " + dividir(x, y)
+      } sino {
+        si op == 5 {
+          SHAREEE x + " ^ " + y + " = " + potencia(x, y)
+        } sino {
+          SHAREEE "Opcion no valida"
+        }
+      }
+    }
+  }
+}
+
+SHAREEE ""
+SHAREEE "=============================="
+SHAREEE "      GRACIAS POR USAR        "
+SHAREEE "    CALCULADORA NAVASCRIPT    "
+SHAREEE "=============================="
