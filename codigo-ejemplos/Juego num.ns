@@ -1,0 +1,102 @@
+Rawr === JUEGO: ADIVINA EL NUMERO ===
+Rawr === Un jugador vs la maquina ===
+Rawr === El numero secreto es fijo ===
+
+lobo aparece vidas = 5
+lobo aparece intentos = 0
+lobo aparece gano = false
+lobo aparece pista = 0
+lobo aparece intento = 0
+lobo aparece secreto = 42
+lobo aparece puntos = 0
+
+SHAREEE "=============================="
+SHAREEE "   ADIVINA EL NUMERO - NS     "
+SHAREEE "=============================="
+SHAREEE ""
+SHAREEE "La maquina eligio un numero"
+SHAREEE "entre 1 y 100."
+SHAREEE "Tienes 5 vidas. Buena suerte!"
+SHAREEE ""
+
+mientras vidas > 0 {
+  SHAREEE "--- Vidas: " + vidas + " | Intentos: " + intentos + " ---"
+  intento = PREGUNTA "Tu intento:"
+  Zap intentos
+
+  si intento == secreto {
+    gano = true
+    vidas = 0
+  } sino {
+    si intento < secreto {
+      pista = 1
+    } sino {
+      pista = 2
+    }
+
+    si pista == 1 {
+      SHAREEE "Muy bajo! Sube mas"
+    } sino {
+      SHAREEE "Muy alto! Baja mas"
+    }
+
+    Boom vidas
+
+    si vidas == 4 {
+      SHAREEE "Pista: el numero es mayor que 20"
+    }
+    si vidas == 3 {
+      SHAREEE "Pista: el numero es menor que 60"
+    }
+    si vidas == 2 {
+      SHAREEE "Pista: el numero es par"
+    }
+    si vidas == 1 {
+      SHAREEE "Pista: el numero tiene dos digitos"
+    }
+
+    SHAREEE ""
+  }
+}
+
+SHAREEE ""
+SHAREEE "=============================="
+
+si gano == true {
+  puntos = 500
+  si intentos == 1 {
+    puntos = 1000
+    SHAREEE "ADIVINASTE!! - PRIMER INTENTO!"
+    SHAREEE "Puntos: " + puntos
+  } sino {
+    si intentos == 2 {
+      puntos = 800
+      SHAREEE "INCREIBLE - Solo 2 intentos!"
+      SHAREEE "Puntos: " + puntos
+    } sino {
+      si intentos == 3 {
+        puntos = 650
+        SHAREEE "EXCELENTE - 3 intentos!"
+        SHAREEE "Puntos: " + puntos
+      } sino {
+        si intentos == 4 {
+          puntos = 550
+          SHAREEE "MUY BIEN - 4 intentos!"
+          SHAREEE "Puntos: " + puntos
+        } sino {
+          SHAREEE "GANASTE por un pelo - 5 intentos!"
+          SHAREEE "Puntos: " + puntos
+        }
+      }
+    }
+  }
+} sino {
+  SHAREEE "GAME OVER - Sin vidas!"
+  SHAREEE "El numero secreto era: " + secreto
+  SHAREEE "Puntos: 0"
+}
+
+SHAREEE ""
+SHAREEE "=============================="
+SHAREEE "  Gracias por jugar NavaScript"
+SHAREEE "=============================="
