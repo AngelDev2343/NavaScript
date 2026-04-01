@@ -3,7 +3,6 @@
 > Un lenguaje de programación interpretado con sintaxis propia, IDE web y extensión para VS Code.
 
 [![Licencia: MIT](https://img.shields.io/badge/Licencia-MIT-white.svg)](https://opensource.org/licenses/MIT)
-[![VS Code Marketplace](https://img.shields.io/badge/VS%20Code-En%20Revisión-blue.svg)](https://marketplace.visualstudio.com)
 [![IDE Web](https://img.shields.io/badge/IDE-En%20Vivo-brightgreen)](https://AngelDev2343.github.io/NavaScript)
 [![GitHub](https://img.shields.io/badge/GitHub-AngelDev2343-black)](https://github.com/AngelDev2343)
 
@@ -106,8 +105,8 @@ Ve a **[NavaScript IDE Oficial](https://AngelDev2343.github.io/NavaScript)**, es
 ### • Opción C — IDE Oficial para Windows
 
 1. Descarga el archivo `NavaScript-IDE-Desktop.Windows.32-64.bits.zip`.
-2. Extraelo dentro de una carpeta.
-3. Executa `navascript_ide.exe`.
+2. Extráelo dentro de una carpeta.
+3. Ejecuta `navascript_ide.exe`.
 4. Y listo empieza a programar.
 
 **Descargar [NavaScript-IDE-Desktop.Windows.32-64.bits.zip](https://github.com/AngelDev2343/NavaScript/releases/download/NS-IDE/NavaScript-IDE-Desktop.Windows.32-64.bits.zip)**
